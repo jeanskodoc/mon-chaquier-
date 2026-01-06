@@ -298,10 +298,9 @@
     
     <!-- Bouton d'accès en bas -->
     <div class="access-button-container">
-        <a href="https://jeanskodoc.github.io/CHEQUIER-DIGITALE-/" 
+        <a href="cheq.html" 
            class="access-button" 
-           target="_blank"
-           rel="noopener noreferrer"
+           target="_self"
            aria-label="Accéder à l'application ESODI Digital">
             <i class="fas fa-external-link-alt"></i> ACCÉDER
         </a>
@@ -404,6 +403,27 @@
                 console.log("Application en mode standalone (PWA)");
                 document.body.classList.add('standalone');
             }
+            
+            // Vérifier si le fichier cheq.html existe
+            fetch('cheq.html', { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Fichier cheq.html trouvé");
+                    } else {
+                        console.warn("Fichier cheq.html non trouvé");
+                        const button = document.querySelector('.access-button');
+                        button.style.backgroundColor = '#ff6b6b';
+                        button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FICHIER MANQUANT';
+                        button.style.cursor = 'not-allowed';
+                        button.onclick = function(e) {
+                            e.preventDefault();
+                            alert("Le fichier cheq.html est introuvable. Veuillez vérifier qu'il est dans le même dossier.");
+                        };
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur de vérification du fichier:", error);
+                });
         });
         
         // Gestion du offline
