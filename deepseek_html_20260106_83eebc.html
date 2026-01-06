@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESODI - Accès Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        
+        .access-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            background-color: rgba(0, 100, 0, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 400px;
+        }
+        
+        .logo {
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .logo h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .access-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            border: 3px solid white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .access-button i {
+            margin-right: 10px;
+        }
+        
+        .access-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+        }
+        
+        .access-button:active {
+            transform: scale(1.05);
+        }
+        
+        .access-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+        
+        .access-button:hover::after {
+            left: 150%;
+        }
+        
+        .note {
+            margin-top: 20px;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Animation de pulsation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 5px 25px rgba(37, 211, 102, 0.8);
+            }
+            100% {
+                box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            }
+        }
+        
+        .access-button {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .access-container {
+                padding: 20px;
+                width: 90%;
+            }
+            
+            .logo h1 {
+                font-size: 26px;
+            }
+            
+            .access-button {
+                font-size: 18px;
+                padding: 18px 35px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Image de fond -->
+    <img src="page de fond chequier.jpeg" alt="Fond Chéquier Numérique" class="background-image">
+    
+    <div class="access-container">
+        <div class="logo">
+            <h1>ESODI DIGITAL</h1>
+            <p>Factures & Chèques Numériques</p>
+        </div>
+        
+        <a href="https://jeanskodoc.github.io/CHEQUIER-DIGITALE-/" class="access-button" target="_blank">
+            <i class="fas fa-external-link-alt"></i> ACCÉDER À L'APPLICATION
+        </a>
+        
+        <p class="note">Cliquez pour ouvrir l'application dans un nouvel onglet</p>
+    </div>
+
+    <script>
+        // Gestion de l'image de fond
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgImage = document.querySelector('.background-image');
+            
+            // Si l'image ne se charge pas, ajouter un fond de secours
+            bgImage.onerror = function() {
+                console.log("Image de fond non chargée, utilisation d'un fond alternatif");
+                document.body.style.background = "linear-gradient(135deg, #006400 0%, #228B22 100%)";
+                this.style.display = 'none';
+            };
+            
+            // Vérifier si l'image est déjà chargée (cache)
+            if (bgImage.complete && bgImage.naturalWidth > 0) {
+                // Image chargée avec succès
+                console.log("Image de fond chargée");
+            } else if (bgImage.complete) {
+                // Image échouée
+                bgImage.onerror();
+            }
+            
+            // Animation du bouton au survol
+            const button = document.querySelector('.access-button');
+            button.addEventListener('mouseenter', function() {
+                this.style.animation = 'none';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.animation = 'pulse 2s infinite';
+            });
+        });
+        
+        // Effet de transition pour le bouton
+        document.querySelector('.access-button').addEventListener('click', function(e) {
+            // Petite animation au clic
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1.1)';
+            }, 150);
+            
+            // Le lien s'ouvre dans un nouvel onglet (déjà géré par target="_blank")
+        });
+    </script>
+</body>
+</html>
