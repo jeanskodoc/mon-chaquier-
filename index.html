@@ -93,6 +93,8 @@
             min-height: 48px;
             cursor: pointer;
             user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .access-button:active {
@@ -275,6 +277,12 @@
         .access-button {
             animation: gentlePulse 3s infinite ease-in-out;
         }
+        
+        /* Pour éviter les retards sur Android */
+        .touch-active {
+            transform: scale(0.95) !important;
+            transition: transform 0.05s !important;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
@@ -301,6 +309,7 @@
         <a href="cheq.html" 
            class="access-button" 
            target="_self"
+           id="accessButton"
            aria-label="Accéder à l'application ESODI Digital">
             <i class="fas fa-external-link-alt"></i> ACCÉDER
         </a>
@@ -309,18 +318,75 @@
     <script>
         // Optimisations pour mobile
         document.addEventListener('DOMContentLoaded', function() {
-            // Prévenir les comportements par défaut indésirables
-            document.addEventListener('touchstart', function(e) {
-                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+            const accessButton = document.getElementById('accessButton');
+            let isTouching = false;
+            let touchStartTime = 0;
+            
+            // Gestion améliorée des événements tactiles pour Android
+            accessButton.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                isTouching = true;
+                touchStartTime = Date.now();
+                this.classList.add('touch-active');
+                
+                // Feedback haptique (si supporté)
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+            }, { passive: false });
+            
+            accessButton.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.classList.remove('touch-active');
+                
+                // Vérifier que le toucher était suffisamment court (pour éviter les "tap and hold")
+                if (isTouching && (Date.now() - touchStartTime) < 500) {
+                    isTouching = false;
+                    
+                    // Ajouter une classe pour feedback visuel
+                    this.style.transform = 'scale(0.95)';
+                    
+                    // Petit délai pour permettre l'animation
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                        
+                        // Redirection programmée pour contourner les restrictions Android
+                        setTimeout(() => {
+                            window.location.href = 'cheq.html';
+                        }, 50);
+                    }, 100);
+                }
+            }, { passive: false });
+            
+            // Gestion du clic pour desktop et fallback
+            accessButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'cheq.html';
+            });
+            
+            // Empêcher le comportement par défaut du double-tap
+            accessButton.addEventListener('touchend', function(e) {
+                if (e.touches.length > 0) {
                     e.preventDefault();
                 }
             }, { passive: false });
             
-            // Désactiver le menu contextuel sur le bouton
-            document.querySelector('.access-button').addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+            // Annuler le touch si l'utilisateur déplace son doigt
+            accessButton.addEventListener('touchmove', function(e) {
+                if (isTouching) {
+                    const touch = e.touches[0];
+                    const rect = this.getBoundingClientRect();
+                    const x = touch.clientX;
+                    const y = touch.clientY;
+                    
+                    // Si le doigt sort du bouton, annuler le toucher
+                    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+                        isTouching = false;
+                        this.classList.remove('touch-active');
+                        this.style.transform = 'scale(1)';
+                    }
+                }
+            }, { passive: false });
             
             // Gestion de l'image de fond avec timeout pour les connexions lentes
             const bgImage = document.querySelector('.background-image');
@@ -376,21 +442,6 @@
             window.addEventListener('resize', handleOrientationChange);
             window.addEventListener('orientationchange', handleOrientationChange);
             
-            // Feedback haptique sur mobile (si supporté)
-            const accessButton = document.querySelector('.access-button');
-            accessButton.addEventListener('touchstart', function() {
-                if (navigator.vibrate) {
-                    navigator.vibrate(20);
-                }
-                this.style.transform = 'scale(0.95)';
-            });
-            
-            accessButton.addEventListener('touchend', function() {
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
-            
             // Prévenir le scroll indésirable
             document.body.addEventListener('touchmove', function(e) {
                 if (e.target.tagName !== 'IMG') {
@@ -411,14 +462,19 @@
                         console.log("Fichier cheq.html trouvé");
                     } else {
                         console.warn("Fichier cheq.html non trouvé");
-                        const button = document.querySelector('.access-button');
-                        button.style.backgroundColor = '#ff6b6b';
-                        button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FICHIER MANQUANT';
-                        button.style.cursor = 'not-allowed';
-                        button.onclick = function(e) {
+                        accessButton.style.background = '#ff6b6b';
+                        accessButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FICHIER MANQUANT';
+                        accessButton.style.cursor = 'not-allowed';
+                        
+                        // Désactiver les événements
+                        accessButton.onclick = null;
+                        accessButton.ontouchstart = null;
+                        accessButton.ontouchend = null;
+                        
+                        accessButton.addEventListener('click', function(e) {
                             e.preventDefault();
                             alert("Le fichier cheq.html est introuvable. Veuillez vérifier qu'il est dans le même dossier.");
-                        };
+                        });
                     }
                 })
                 .catch(error => {
@@ -429,7 +485,7 @@
         // Gestion du offline
         window.addEventListener('offline', function() {
             console.log("Mode hors ligne");
-            const button = document.querySelector('.access-button');
+            const button = document.getElementById('accessButton');
             button.style.opacity = '0.7';
             button.style.cursor = 'not-allowed';
             button.title = "Connexion nécessaire";
@@ -437,11 +493,14 @@
         
         window.addEventListener('online', function() {
             console.log("Mode en ligne");
-            const button = document.querySelector('.access-button');
+            const button = document.getElementById('accessButton');
             button.style.opacity = '1';
             button.style.cursor = 'pointer';
             button.title = "";
         });
+        
+        // Solution alternative pour les anciens navigateurs Android
+        document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 </body>
 </html>
