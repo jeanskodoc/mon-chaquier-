@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>ESODI Facturation</title>
+    <title>ESODI Facturation - Tableau de Bord</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* RESET MOBILE */
         * {
@@ -107,13 +108,15 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            overflow-x: auto;
+            white-space: nowrap;
         }
         
         .tab {
             flex: 1;
             text-align: center;
             padding: 16px 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -121,6 +124,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            min-width: 90px;
         }
         
         .tab.active {
@@ -256,6 +260,16 @@
         
         .btn-secondary {
             background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-info {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: #f59e0b;
             color: white;
         }
         
@@ -561,74 +575,6 @@
             border-top: 1px solid #eee;
         }
         
-        /* MEDIA QUERIES */
-        @media (min-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            header h1 {
-                font-size: 22px;
-            }
-            
-            .tab {
-                font-size: 16px;
-                padding: 16px 12px;
-            }
-            
-            .btn {
-                padding: 16px 24px;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            body {
-                padding: 20px;
-            }
-            
-            .container {
-                max-width: 95%;
-            }
-            
-            .form-row {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            
-            .form-group {
-                flex: 1;
-                min-width: calc(50% - 10px);
-            }
-            
-            .signature-container {
-                flex-direction: row;
-            }
-            
-            .signature-box {
-                flex: 1;
-            }
-            
-            .action-buttons {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            
-            .btn {
-                width: auto;
-                flex: 1;
-                min-width: calc(50% - 10px);
-            }
-            
-            .invoice-header {
-                flex-direction: row;
-                justify-content: space-between;
-            }
-            
-            .invoice-details {
-                flex-direction: row;
-            }
-        }
-        
         /* CARD STYLE FOR ITEMS */
         .item-card {
             background: white;
@@ -682,6 +628,347 @@
             border-radius: 5px;
             margin-top: 5px;
         }
+        
+        /* FILTER SECTION */
+        .filter-section {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            width: 100%;
+        }
+        
+        .invoice-list {
+            margin-top: 20px;
+        }
+        
+        .invoice-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+        
+        .invoice-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .invoice-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-card-title {
+            font-weight: 600;
+            color: #006400;
+            font-size: 18px;
+            flex: 1;
+        }
+        
+        .invoice-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .invoice-card-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .invoice-card-detail {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .invoice-card-label {
+            font-weight: 500;
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .invoice-card-total {
+            background-color: #f0fff0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #006400;
+            border-left: 4px solid #006400;
+        }
+        
+        .action-button-small {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+        
+        .action-button-small:active {
+            transform: scale(0.98);
+        }
+        
+        /* ANALYTICS SECTION */
+        .analytics-section {
+            margin-top: 20px;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #006400;
+            margin-bottom: 5px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            height: 300px;
+            position: relative;
+        }
+        
+        /* PRINT STYLES - CORRIGÉ */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                padding: 20px;
+                margin: 0;
+                box-shadow: none;
+                border: none;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-header {
+                text-align: center;
+                margin-bottom: 30px;
+                border-bottom: 3px solid #006400;
+                padding-bottom: 20px;
+            }
+            
+            .print-logo {
+                font-size: 48px;
+                background: #006400;
+                color: white;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 15px;
+                font-weight: bold;
+            }
+            
+            .print-section {
+                margin-bottom: 25px;
+                page-break-inside: avoid;
+            }
+            
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            
+            .print-table th {
+                background-color: #f0f0f0;
+                padding: 12px;
+                text-align: left;
+                border: 1px solid #ddd;
+                font-weight: bold;
+            }
+            
+            .print-table td {
+                padding: 12px;
+                border: 1px solid #ddd;
+            }
+            
+            .print-totals {
+                background-color: #f9f9f9;
+                padding: 20px;
+                border: 2px solid #006400;
+                margin-top: 30px;
+                page-break-inside: avoid;
+            }
+            
+            .print-signatures {
+                margin-top: 50px;
+                padding-top: 30px;
+                border-top: 2px dashed #666;
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* MEDIA QUERIES */
+        @media (min-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            header h1 {
+                font-size: 22px;
+            }
+            
+            .tab {
+                font-size: 15px;
+                padding: 16px 12px;
+            }
+            
+            .btn {
+                padding: 16px 24px;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 95%;
+            }
+            
+            .form-row {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .form-group {
+                flex: 1;
+                min-width: calc(50% - 10px);
+            }
+            
+            .signature-container {
+                flex-direction: row;
+            }
+            
+            .signature-box {
+                flex: 1;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                width: auto;
+                flex: 1;
+                min-width: calc(50% - 10px);
+            }
+            
+            .invoice-header {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .invoice-details {
+                flex-direction: row;
+            }
+            
+            .filter-row {
+                flex-direction: row;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .action-buttons-row {
+                display: flex;
+                gap: 10px;
+            }
+            
+            .action-button-small {
+                min-width: auto;
+                flex: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -692,8 +979,8 @@
                     ES
                 </div>
                 <div style="flex: 1; min-width: 0;">
-                    <h1>ESODI Facturation</h1>
-                    <p>Créez et envoyez des factures en FCFA par WhatsApp</p>
+                    <h1>ESODI Facturation - Tableau de Bord</h1>
+                    <p>Créez, gérez et analysez vos factures en FCFA</p>
                     <div class="whatsapp-auto-notice">
                         <i class="fab fa-whatsapp"></i> Envoi WhatsApp automatique
                     </div>
@@ -704,6 +991,8 @@
         <div class="tabs">
             <div class="tab active" data-tab="owner">ESODI</div>
             <div class="tab" data-tab="client">Facture</div>
+            <div class="tab" data-tab="history">Historique</div>
+            <div class="tab" data-tab="analytics">Analyse</div>
         </div>
         
         <div id="owner-tab" class="tab-content active">
@@ -939,6 +1228,9 @@
                 <button class="btn btn-success" id="save-invoice">
                     <i class="fas fa-paper-plane"></i> Envoyer Facture
                 </button>
+                <button class="btn btn-info" id="print-invoice">
+                    <i class="fas fa-print"></i> Imprimer Facture
+                </button>
                 <button class="btn btn-secondary" id="clear-form">
                     <i class="fas fa-redo"></i> Nouvelle
                 </button>
@@ -947,10 +1239,96 @@
             <div id="invoice-status" class="status-message"></div>
         </div>
         
+        <div id="history-tab" class="tab-content">
+            <div class="filter-section">
+                <h2 class="section-title"><i class="fas fa-search"></i> Filtrer les Factures</h2>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filter-client">Nom du client</label>
+                        <input type="text" id="filter-client" placeholder="Rechercher par nom...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-date-from">Date de début</label>
+                        <input type="date" id="filter-date-from">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-date-to">Date de fin</label>
+                        <input type="date" id="filter-date-to">
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <button class="btn btn-primary" id="apply-filter" style="margin-top: 10px;">
+                            <i class="fas fa-filter"></i> Appliquer le filtre
+                        </button>
+                        <button class="btn btn-secondary" id="clear-filter" style="margin-top: 10px;">
+                            <i class="fas fa-times"></i> Effacer filtre
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="invoice-list" id="invoice-history-list">
+                <!-- Liste des factures -->
+            </div>
+        </div>
+        
+        <div id="analytics-tab" class="tab-content">
+            <div class="analytics-section">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> Analyse des Ventes</h2>
+                
+                <div class="analytics-grid">
+                    <div class="stat-card">
+                        <h3>Chiffre d'affaires total</h3>
+                        <div class="stat-value" id="total-revenue">0 FCFA</div>
+                        <div class="stat-change" id="revenue-change">+0% vs mois dernier</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Nombre de factures</h3>
+                        <div class="stat-value" id="total-invoices">0</div>
+                        <div class="stat-change" id="invoices-change">+0% vs mois dernier</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Moyenne par facture</h3>
+                        <div class="stat-value" id="average-invoice">0 FCFA</div>
+                        <div class="stat-change" id="average-change">+0% vs mois dernier</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Clients actifs</h3>
+                        <div class="stat-value" id="active-clients">0</div>
+                        <div class="stat-change" id="clients-change">+0% vs mois dernier</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">Évolution du chiffre d'affaires</h3>
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">Répartition par méthode de paiement</h3>
+                    <canvas id="payment-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">Top 5 clients</h3>
+                    <canvas id="clients-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
         <footer>
             <p style="font-weight: 600; margin-bottom: 5px;">ESODI - Facturation Digital</p>
             <p style="font-size: 11px;">WhatsApp: +228 92 87 16 05 | FCFA | Togo</p>
         </footer>
+    </div>
+
+    <!-- Zone d'impression cachée -->
+    <div id="print-container" style="display: none;">
+        <div id="print-content" class="print-area"></div>
     </div>
 
     <script>
@@ -978,13 +1356,12 @@
         // Configuration WhatsApp automatique
         let autoWhatsAppEnabled = true;
         
-        // Tables de conversion pour les nombres en lettres (version corrigée)
-        const units = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
-        const teens = ['dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
-        const tens = ['', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt'];
-        const specialTens = ['', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
+        // Variables pour les graphiques
+        let revenueChart = null;
+        let paymentChart = null;
+        let clientsChart = null;
         
-        // Formatage des nombres avec séparateurs de milliers pour FCFA
+        // Fonction de formatage FCFA
         function formatFCFA(number) {
             return new Intl.NumberFormat('fr-FR', {
                 minimumFractionDigits: 0,
@@ -992,130 +1369,8 @@
             }).format(number) + ' FCFA';
         }
         
-        // Fonction complète de conversion nombre en lettres (FCFA) - CORRIGÉE
+        // Fonction de conversion nombre en lettres (version simplifiée)
         function numberToFrenchWords(num) {
-            if (num === 0) return 'Zéro francs CFA';
-            
-            let result = '';
-            let remaining = Math.floor(num);
-            
-            // Gestion des milliards
-            if (remaining >= 1000000000) {
-                const billions = Math.floor(remaining / 1000000000);
-                result += convertNumber(billions) + (billions > 1 ? ' milliards ' : ' milliard ');
-                remaining %= 1000000000;
-            }
-            
-            // Gestion des millions
-            if (remaining >= 1000000) {
-                const millions = Math.floor(remaining / 1000000);
-                result += convertNumber(millions) + (millions > 1 ? ' millions ' : ' million ');
-                remaining %= 1000000;
-            }
-            
-            // Gestion des milliers
-            if (remaining >= 1000) {
-                if (remaining < 2000) {
-                    result += 'mille ';
-                } else {
-                    const thousands = Math.floor(remaining / 1000);
-                    result += convertNumber(thousands) + ' mille ';
-                }
-                remaining %= 1000;
-            }
-            
-            // Gestion des unités restantes
-            if (remaining > 0) {
-                result += convertNumber(remaining);
-            }
-            
-            // Nettoyer et formater
-            result = result.trim();
-            
-            // Gérer le pluriel
-            if (result.endsWith('un') && result !== 'un') {
-                result = result.replace(/un$/, 'un franc CFA');
-            } else {
-                result += ' francs CFA';
-            }
-            
-            // Capitaliser la première lettre
-            return result.charAt(0).toUpperCase() + result.slice(1);
-        }
-        
-        // Conversion principale des nombres
-        function convertNumber(num) {
-            if (num === 0) return '';
-            
-            let result = '';
-            
-            // Centaines
-            if (num >= 100) {
-                const hundreds = Math.floor(num / 100);
-                if (hundreds === 1) {
-                    result += 'cent';
-                } else {
-                    result += units[hundreds] + ' cent';
-                }
-                num %= 100;
-                
-                if (num > 0) {
-                    result += ' ';
-                } else if (hundreds > 1) {
-                    result += 's';
-                }
-            }
-            
-            // Dizaines et unités
-            if (num > 0) {
-                if (num < 10) {
-                    result += units[num];
-                } else if (num < 20) {
-                    result += teens[num - 10];
-                } else {
-                    const tensDigit = Math.floor(num / 10);
-                    const unitsDigit = num % 10;
-                    
-                    // Cas spéciaux français
-                    if (tensDigit === 7 || tensDigit === 9) {
-                        const base = tensDigit === 7 ? 60 : 80;
-                        const remainder = num - base;
-                        
-                        if (tensDigit === 7) {
-                            result += 'soixante';
-                        } else {
-                            result += 'quatre-vingt';
-                        }
-                        
-                        if (remainder === 0) {
-                            if (tensDigit === 8) result += 's';
-                        } else if (remainder === 1) {
-                            result += '-et-un';
-                        } else if (remainder < 10) {
-                            result += '-' + units[remainder];
-                        } else {
-                            result += '-' + teens[remainder - 10];
-                        }
-                    } else {
-                        // Dizaines normales
-                        result += tens[tensDigit];
-                        
-                        if (unitsDigit === 1 && tensDigit !== 8) {
-                            result += '-et-un';
-                        } else if (unitsDigit > 1) {
-                            result += '-' + units[unitsDigit];
-                        } else if (unitsDigit === 0 && tensDigit === 8) {
-                            result += 's';
-                        }
-                    }
-                }
-            }
-            
-            return result.trim();
-        }
-        
-        // Version alternative plus simple pour vérification
-        function numberToFrenchWordsSimple(num) {
             const units = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf'];
             const teens = ['dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
             const tens = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingt', 'quatre-vingt-dix'];
@@ -1125,7 +1380,6 @@
             const total = Math.floor(num);
             let result = '';
             
-            // Fonction récursive pour convertir
             function convert(n) {
                 if (n < 10) return units[n];
                 if (n < 20) return teens[n - 10];
@@ -1174,7 +1428,6 @@
             result = convert(total);
             result = result.charAt(0).toUpperCase() + result.slice(1);
             
-            // Gérer le pluriel de franc
             if (result.endsWith('un')) {
                 result = result + ' franc CFA';
             } else {
@@ -1182,11 +1435,6 @@
             }
             
             return result;
-        }
-        
-        // Utiliser la version simple pour éviter les erreurs
-        function numberToFrenchWords(num) {
-            return numberToFrenchWordsSimple(num);
         }
         
         // Initialisation
@@ -1215,8 +1463,11 @@
             // Générer un aperçu initial
             updateInvoicePreview();
             
-            // Test de la fonction de conversion
-            console.log("Test conversion:", numberToFrenchWords(1234567));
+            // Charger l'historique des factures
+            loadInvoiceHistory();
+            
+            // Initialiser les graphiques
+            initCharts();
         });
         
         // Initialiser les pads de signature tactile
@@ -1269,7 +1520,6 @@
         
         // Configurer les événements de dessin tactile
         function setupDrawingEvents(canvas, ctx, padType) {
-            // Fonction pour obtenir les coordonnées
             function getCoordinates(e) {
                 const rect = canvas.getBoundingClientRect();
                 let x, y;
@@ -1285,7 +1535,6 @@
                 return { x, y };
             }
             
-            // Démarrer le dessin
             function startDrawing(e) {
                 e.preventDefault();
                 isDrawing = true;
@@ -1295,18 +1544,15 @@
                 lastX = pos.x;
                 lastY = pos.y;
                 
-                // Masquer les instructions
                 const instructions = canvas.parentElement.querySelector('.signature-instructions');
                 if (instructions) {
                     instructions.style.opacity = '0';
                 }
                 
-                // Commencer un nouveau tracé
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
             }
             
-            // Dessiner
             function draw(e) {
                 e.preventDefault();
                 if (!isDrawing || currentSignaturePad !== padType) return;
@@ -1315,16 +1561,13 @@
                 const currentX = pos.x;
                 const currentY = pos.y;
                 
-                // Dessiner la ligne
                 ctx.lineTo(currentX, currentY);
                 ctx.stroke();
                 
-                // Mettre à jour la position
                 lastX = currentX;
                 lastY = currentY;
             }
             
-            // Arrêter le dessin
             function stopDrawing() {
                 if (!isDrawing || currentSignaturePad !== padType) return;
                 
@@ -1332,16 +1575,13 @@
                 currentSignaturePad = null;
                 ctx.closePath();
                 
-                // Sauvegarder automatiquement la signature
                 setTimeout(() => saveSignature(padType), 500);
             }
             
-            // Événements tactiles (mobile)
             canvas.addEventListener('touchstart', startDrawing);
             canvas.addEventListener('touchmove', draw);
             canvas.addEventListener('touchend', stopDrawing);
             
-            // Événements souris (desktop)
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
@@ -1357,7 +1597,6 @@
         
         // Configurer les boutons de signature
         function setupSignatureButtons() {
-            // Boutons d'effacement
             document.querySelectorAll('.signature-clear').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const padType = this.getAttribute('data-pad');
@@ -1365,7 +1604,6 @@
                 });
             });
             
-            // Boutons de sauvegarde
             document.querySelectorAll('.signature-save').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const padType = this.getAttribute('data-pad');
@@ -1405,23 +1643,19 @@
                 return;
             }
             
-            // Sauvegarder l'image de la signature
             const dataURL = canvas.toDataURL('image/png');
             localStorage.setItem(signatureId, dataURL);
             
-            // Mettre à jour l'aperçu de la facture
             updateInvoicePreview();
         }
         
         // Charger les signatures sauvegardées
         function loadSavedSignatures() {
-            // Charger la signature du client
             const savedClientSignature = localStorage.getItem('clientSignature');
             if (savedClientSignature) {
                 loadImageToCanvas(savedClientSignature, clientSignatureCanvas, clientSignatureCtx);
             }
             
-            // Charger la signature ESODI
             const savedOwnerSignature = localStorage.getItem('ownerSignature');
             if (savedOwnerSignature) {
                 loadImageToCanvas(savedOwnerSignature, ownerSignatureCanvas, ownerSignatureCtx);
@@ -1458,13 +1692,21 @@
                 tab.addEventListener('click', function() {
                     const target = this.getAttribute('data-tab');
                     
-                    // Désactiver tous les onglets
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     
-                    // Activer l'onglet cible
                     this.classList.add('active');
                     document.getElementById(`${target}-tab`).classList.add('active');
+                    
+                    // Si onglet analyse, mettre à jour les graphiques
+                    if (target === 'analytics') {
+                        updateAnalytics();
+                    }
+                    
+                    // Si onglet historique, charger les factures
+                    if (target === 'history') {
+                        loadInvoiceHistory();
+                    }
                 });
             });
             
@@ -1491,8 +1733,22 @@
             // Sauvegarder et envoyer la facture
             document.getElementById('save-invoice').addEventListener('click', saveAndSendInvoice);
             
+            // Imprimer la facture
+            document.getElementById('print-invoice').addEventListener('click', printInvoice);
+            
             // Effacer le formulaire
             document.getElementById('clear-form').addEventListener('click', clearForm);
+            
+            // Filtrer les factures
+            document.getElementById('apply-filter').addEventListener('click', applyFilter);
+            document.getElementById('clear-filter').addEventListener('click', clearFilter);
+            
+            // Entrée sur les champs de filtre
+            document.getElementById('filter-client').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    applyFilter();
+                }
+            });
         }
         
         // Sauvegarder les informations du propriétaire
@@ -1506,16 +1762,13 @@
                 logo: "ESODI"
             };
             
-            // Sauvegarder dans localStorage
             localStorage.setItem('invoiceOwnerInfo', JSON.stringify(ownerInfo));
             
-            // Afficher un message de confirmation
             const statusEl = document.getElementById('owner-status');
             statusEl.textContent = 'Informations ESODI enregistrées !';
             statusEl.className = 'status-message status-success';
             statusEl.style.display = 'block';
             
-            // Masquer le message après 3 secondes
             setTimeout(() => {
                 statusEl.style.display = 'none';
             }, 3000);
@@ -1523,7 +1776,6 @@
         
         // Charger les données sauvegardées
         function loadSavedData() {
-            // Charger les informations du propriétaire
             const savedOwnerInfo = localStorage.getItem('invoiceOwnerInfo');
             if (savedOwnerInfo) {
                 const loadedInfo = JSON.parse(savedOwnerInfo);
@@ -1533,7 +1785,6 @@
                 document.getElementById('owner-siret').value = ownerInfo.siret;
             }
             
-            // Charger les articles de la dernière facture
             const savedItems = localStorage.getItem('invoiceLastItems');
             if (savedItems) {
                 invoiceItems = JSON.parse(savedItems);
@@ -1565,7 +1816,6 @@
             renderItemsListMobile();
             updateInvoicePreview();
             
-            // Réinitialiser les champs d'article
             document.getElementById('item-description').value = '';
             document.getElementById('item-quantity').value = 1;
             document.getElementById('item-price').value = 5000;
@@ -1752,11 +2002,420 @@
                     </div>
                 </div>
             `;
+            
+            // Mettre à jour également la zone d'impression
+            updatePrintArea();
+        }
+        
+        // CORRECTION : Mettre à jour la zone d'impression avec un format spécifique pour l'impression
+        function updatePrintArea() {
+            const printContent = document.getElementById('print-content');
+            
+            // Calculer les totaux
+            let subtotal = 0;
+            let taxAmount = 0;
+            let total = 0;
+            
+            invoiceItems.forEach(item => {
+                const itemTotal = item.quantity * item.price;
+                subtotal += itemTotal;
+                taxAmount += itemTotal * (item.tax / 100);
+            });
+            
+            total = subtotal + taxAmount;
+            
+            // Convertir le total en lettres
+            const totalInWords = numberToFrenchWords(total);
+            
+            // Obtenir les signatures
+            const clientSignatureData = getSignatureDataURL('client');
+            const ownerSignatureData = getSignatureDataURL('owner');
+            
+            // Créer le contenu d'impression avec un format adapté pour l'impression
+            printContent.innerHTML = `
+                <div class="print-header">
+                    <div class="print-logo">ES</div>
+                    <h1 style="color: #006400; margin-bottom: 5px;">${ownerInfo.name}</h1>
+                    <p style="font-size: 16px;">${ownerInfo.address || 'Adresse à définir'}</p>
+                    <p style="font-size: 14px; margin-top: 5px;">
+                        <strong>Téléphone:</strong> ${ownerInfo.phone} | 
+                        <strong>Email:</strong> ${ownerInfo.email}
+                    </p>
+                    ${ownerInfo.siret ? `<p style="font-size: 14px;"><strong>RCCM:</strong> ${ownerInfo.siret}</p>` : ''}
+                </div>
+                
+                <div class="print-section">
+                    <h2 style="color: #006400; border-bottom: 2px solid #006400; padding-bottom: 10px; margin-bottom: 20px;">
+                        FACTURE N°: ${document.getElementById('invoice-number').value || 'FACT-ESODI-XXXX-001'}
+                    </h2>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                        <div style="flex: 1;">
+                            <h3 style="color: #006400; margin-bottom: 10px;">Facturé à:</h3>
+                            <p style="font-size: 16px; margin-bottom: 5px;"><strong>${document.getElementById('client-name').value || 'Nom du client'}</strong></p>
+                            <p style="font-size: 14px;">${document.getElementById('client-phone').value || ''}</p>
+                            ${document.getElementById('client-email').value ? `<p style="font-size: 14px;">${document.getElementById('client-email').value}</p>` : ''}
+                            ${document.getElementById('client-address').value ? `<p style="font-size: 14px;">${document.getElementById('client-address').value}</p>` : ''}
+                        </div>
+                        
+                        <div style="flex: 1; text-align: right;">
+                            <h3 style="color: #006400; margin-bottom: 10px;">Détails facture:</h3>
+                            <p style="font-size: 14px; margin-bottom: 5px;"><strong>Date facturation:</strong> ${document.getElementById('invoice-date').value || new Date().toLocaleDateString('fr-FR')}</p>
+                            <p style="font-size: 14px; margin-bottom: 5px;"><strong>Date échéance:</strong> ${document.getElementById('due-date').value || new Date().toLocaleDateString('fr-FR')}</p>
+                            <p style="font-size: 14px;"><strong>Méthode paiement:</strong> ${document.getElementById('payment-method').value || 'Mobile Money'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="print-section">
+                    <h3 style="color: #006400; margin-bottom: 15px;">Articles et Services</h3>
+                    
+                    <table class="print-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire</th>
+                                <th>TVA</th>
+                                <th>Total TTC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoiceItems.length > 0 ? invoiceItems.map(item => {
+                                const itemTotal = item.quantity * item.price;
+                                const itemTotalTTC = itemTotal + (itemTotal * (item.tax / 100));
+                                return `
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${formatFCFA(item.price)}</td>
+                                        <td>${item.tax}%</td>
+                                        <td>${formatFCFA(itemTotalTTC)}</td>
+                                    </tr>
+                                `;
+                            }).join('') : '<tr><td colspan="5" style="text-align: center;">Aucun article</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="print-totals">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 16px;">Sous-total HT:</span>
+                        <span style="font-size: 16px; font-weight: bold;">${formatFCFA(subtotal)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="font-size: 16px;">TVA:</span>
+                        <span style="font-size: 16px; font-weight: bold;">${formatFCFA(taxAmount)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 15px; border-top: 2px solid #006400;">
+                        <span style="font-size: 18px; font-weight: bold;">TOTAL TTC:</span>
+                        <span style="font-size: 20px; font-weight: bold; color: #006400;">${formatFCFA(total)}</span>
+                    </div>
+                    
+                    <div class="amount-in-words" style="margin-top: 20px; padding: 15px; background: #f0fff0; border-radius: 8px;">
+                        <p style="font-size: 16px;"><strong>Arrêtée à la somme de :</strong><br>${totalInWords}</p>
+                    </div>
+                </div>
+                
+                ${document.getElementById('invoice-notes').value ? `
+                    <div class="print-section">
+                        <h3 style="color: #006400; margin-bottom: 10px;">Notes:</h3>
+                        <p style="font-size: 14px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                            ${document.getElementById('invoice-notes').value}
+                        </p>
+                    </div>
+                ` : ''}
+                
+                <div class="print-signatures">
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                        <div style="text-align: center; flex: 1;">
+                            <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #666; padding-bottom: 5px; display: inline-block;">
+                                Signature du Client
+                            </p>
+                            ${clientSignatureData ? 
+                                `<img src="${clientSignatureData}" style="max-width: 200px; max-height: 80px; display: block; margin: 10px auto;" alt="Signature client">` :
+                                '<div style="height: 80px; border-bottom: 1px solid #666; margin: 10px 0;"></div>'
+                            }
+                            <p style="margin-top: 10px; font-size: 14px;">${document.getElementById('client-name').value || 'Nom du client'}</p>
+                            <p style="font-size: 12px; color: #666;">Date: ${document.getElementById('invoice-date').value || new Date().toLocaleDateString('fr-FR')}</p>
+                        </div>
+                        
+                        <div style="text-align: center; flex: 1;">
+                            <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #666; padding-bottom: 5px; display: inline-block;">
+                                Signature ESODI
+                            </p>
+                            ${ownerSignatureData ? 
+                                `<img src="${ownerSignatureData}" style="max-width: 200px; max-height: 80px; display: block; margin: 10px auto;" alt="Signature ESODI">` :
+                                '<div style="height: 80px; border-bottom: 1px solid #666; margin: 10px 0;"></div>'
+                            }
+                            <p style="margin-top: 10px; font-size: 14px;">${ownerInfo.name}</p>
+                            <p style="font-size: 12px; color: #666;">Date: ${document.getElementById('invoice-date').value || new Date().toLocaleDateString('fr-FR')}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
+                    <p>Merci pour votre confiance !</p>
+                    <p>ESODI - WhatsApp: ${ownerInfo.phone} - Email: ${ownerInfo.email}</p>
+                    <p>Cette facture a été générée électroniquement et ne nécessite pas de cachet</p>
+                </div>
+            `;
+        }
+        
+        // CORRECTION : Imprimer la facture
+        function printInvoice() {
+            if (invoiceItems.length === 0) {
+                showInvoiceStatus('Ajoutez des articles avant d\'imprimer', 'error');
+                return;
+            }
+            
+            // Mettre à jour la zone d'impression avec les données actuelles
+            updatePrintArea();
+            
+            // Créer une nouvelle fenêtre pour l'impression
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Facture ESODI - ${document.getElementById('invoice-number').value}</title>
+                    <style>
+                        @media print {
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 20px;
+                                color: #333;
+                            }
+                            
+                            .print-area {
+                                max-width: 800px;
+                                margin: 0 auto;
+                                padding: 20px;
+                                background: white;
+                            }
+                            
+                            .print-header {
+                                text-align: center;
+                                margin-bottom: 30px;
+                                border-bottom: 3px solid #006400;
+                                padding-bottom: 20px;
+                            }
+                            
+                            .print-logo {
+                                font-size: 48px;
+                                background: #006400;
+                                color: white;
+                                width: 80px;
+                                height: 80px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 15px;
+                                font-weight: bold;
+                            }
+                            
+                            .print-section {
+                                margin-bottom: 25px;
+                                page-break-inside: avoid;
+                            }
+                            
+                            .print-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin: 20px 0;
+                            }
+                            
+                            .print-table th {
+                                background-color: #f0f0f0;
+                                padding: 12px;
+                                text-align: left;
+                                border: 1px solid #ddd;
+                                font-weight: bold;
+                            }
+                            
+                            .print-table td {
+                                padding: 12px;
+                                border: 1px solid #ddd;
+                            }
+                            
+                            .print-totals {
+                                background-color: #f9f9f9;
+                                padding: 20px;
+                                border: 2px solid #006400;
+                                margin-top: 30px;
+                                page-break-inside: avoid;
+                            }
+                            
+                            .print-signatures {
+                                margin-top: 50px;
+                                padding-top: 30px;
+                                border-top: 2px dashed #666;
+                                page-break-inside: avoid;
+                            }
+                            
+                            h1, h2, h3 {
+                                color: #006400;
+                            }
+                            
+                            .amount-in-words {
+                                background-color: #f0fff0;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin-top: 15px;
+                                border-left: 4px solid #006400;
+                            }
+                            
+                            @page {
+                                margin: 20mm;
+                            }
+                        }
+                        
+                        /* Styles pour l'aperçu à l'écran */
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                            color: #333;
+                            background: #f5f5f5;
+                        }
+                        
+                        .print-area {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 30px;
+                            background: white;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                            border-radius: 10px;
+                        }
+                        
+                        .print-header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            border-bottom: 3px solid #006400;
+                            padding-bottom: 20px;
+                        }
+                        
+                        .print-logo {
+                            font-size: 48px;
+                            background: #006400;
+                            color: white;
+                            width: 80px;
+                            height: 80px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 15px;
+                            font-weight: bold;
+                        }
+                        
+                        .print-section {
+                            margin-bottom: 25px;
+                        }
+                        
+                        .print-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 20px 0;
+                        }
+                        
+                        .print-table th {
+                            background-color: #f0f0f0;
+                            padding: 12px;
+                            text-align: left;
+                            border: 1px solid #ddd;
+                            font-weight: bold;
+                        }
+                        
+                        .print-table td {
+                            padding: 12px;
+                            border: 1px solid #ddd;
+                        }
+                        
+                        .print-totals {
+                            background-color: #f9f9f9;
+                            padding: 20px;
+                            border: 2px solid #006400;
+                            margin-top: 30px;
+                        }
+                        
+                        .print-signatures {
+                            margin-top: 50px;
+                            padding-top: 30px;
+                            border-top: 2px dashed #666;
+                        }
+                        
+                        h1, h2, h3 {
+                            color: #006400;
+                        }
+                        
+                        .amount-in-words {
+                            background-color: #f0fff0;
+                            padding: 15px;
+                            border-radius: 8px;
+                            margin-top: 15px;
+                            border-left: 4px solid #006400;
+                        }
+                        
+                        .print-actions {
+                            text-align: center;
+                            margin-top: 30px;
+                            padding-top: 20px;
+                            border-top: 1px solid #ddd;
+                        }
+                        
+                        button {
+                            background-color: #006400;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            margin: 0 10px;
+                        }
+                        
+                        button:hover {
+                            background-color: #228B22;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-area">
+                        ${document.getElementById('print-content').innerHTML}
+                        
+                        <div class="print-actions">
+                            <button onclick="window.print()">Imprimer</button>
+                            <button onclick="window.close()">Fermer</button>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        // Redimensionner les images de signature pour l'impression
+                        window.onload = function() {
+                            const images = document.querySelectorAll('img');
+                            images.forEach(img => {
+                                img.style.maxWidth = '200px';
+                                img.style.maxHeight = '80px';
+                                img.style.display = 'block';
+                                img.style.margin = '10px auto';
+                            });
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Afficher un message de succès
+            showInvoiceStatus('Prévisualisation d\'impression ouverte !', 'success');
         }
         
         // Générer la facture complète
         function generateInvoice() {
-            // Valider les champs obligatoires
             const clientName = document.getElementById('client-name').value;
             const clientPhone = document.getElementById('client-phone').value;
             
@@ -1770,15 +2429,12 @@
                 return;
             }
             
-            // Mettre à jour l'aperçu
             updateInvoicePreview();
-            
             showInvoiceStatus('Aperçu actualisé !', 'success');
         }
         
         // Sauvegarder ET envoyer la facture par WhatsApp
         function saveAndSendInvoice() {
-            // Valider les champs obligatoires
             const clientName = document.getElementById('client-name').value;
             const clientPhone = document.getElementById('client-phone').value;
             
@@ -1792,15 +2448,12 @@
                 return;
             }
             
-            // Sauvegarder les signatures
             saveSignature('client');
             saveSignature('owner');
             
-            // Obtenir les données des signatures
             const clientSigData = getSignatureDataURL('client');
             const ownerSigData = getSignatureDataURL('owner');
             
-            // Créer l'objet facture
             const invoice = {
                 id: Date.now(),
                 number: document.getElementById('invoice-number').value,
@@ -1821,23 +2474,28 @@
                 createdAt: new Date().toISOString()
             };
             
-            // Sauvegarder dans localStorage
+            // Sauvegarder la facture
             const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
             savedInvoices.push(invoice);
             localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices));
             
-            // Sauvegarder les articles
+            // Sauvegarder les articles pour réutilisation
             localStorage.setItem('invoiceLastItems', JSON.stringify(invoiceItems));
             
-            // Envoyer par WhatsApp
-            sendWhatsAppMessage(invoice);
+            // Envoyer par WhatsApp si activé
+            if (autoWhatsAppEnabled) {
+                sendWhatsAppMessage(invoice);
+                showInvoiceStatus(`Facture sauvegardée et envoyée sur WhatsApp !`, 'success');
+            } else {
+                showInvoiceStatus('Facture sauvegardée !', 'success');
+            }
             
-            showInvoiceStatus(`Facture envoyée sur WhatsApp !`, 'success');
+            // Mettre à jour l'analyse
+            updateAnalytics();
         }
         
-        // Fonction pour envoyer le message WhatsApp avec montant en lettres
+        // Fonction pour envoyer le message WhatsApp
         function sendWhatsAppMessage(invoice) {
-            // Calculer les totaux
             let subtotal = 0;
             let taxAmount = 0;
             invoice.items.forEach(item => {
@@ -1848,7 +2506,6 @@
             const total = subtotal + taxAmount;
             const totalInWords = numberToFrenchWords(total);
             
-            // Message WhatsApp
             let message = `*📋 FACTURE ESODI - ${invoice.number}*%0A%0A`;
             message += `*Bonjour ${invoice.client.name}*,%0A%0A`;
             message += `Voici votre facture :%0A%0A`;
@@ -1892,10 +2549,7 @@
             message += `Merci pour votre confiance !%0A`;
             message += `*L'équipe ESODI*`;
             
-            // Formater le numéro de téléphone
             const formattedPhone = invoice.client.phone.replace(/\s+/g, '').replace('+', '');
-            
-            // Ouvrir WhatsApp
             const whatsappURL = `https://wa.me/${formattedPhone}?text=${message}`;
             window.open(whatsappURL, '_blank');
         }
@@ -1903,18 +2557,15 @@
         // Effacer le formulaire
         function clearForm() {
             if (confirm('Créer une nouvelle facture ?')) {
-                // Réinitialiser les champs du client
                 document.getElementById('client-name').value = '';
                 document.getElementById('client-phone').value = '';
                 document.getElementById('client-email').value = '';
                 document.getElementById('client-address').value = '';
                 
-                // Numéro de facture incrémenté
                 const nextInvoiceNumber = parseInt(localStorage.getItem('lastInvoiceNumber') || '0') + 1;
                 localStorage.setItem('lastInvoiceNumber', nextInvoiceNumber);
                 document.getElementById('invoice-number').value = `FACT-ESODI-${new Date().getFullYear()}-${nextInvoiceNumber.toString().padStart(3, '0')}`;
                 
-                // Dates
                 const today = new Date().toISOString().split('T')[0];
                 const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                 document.getElementById('invoice-date').value = today;
@@ -1922,15 +2573,694 @@
                 
                 document.getElementById('invoice-notes').value = '';
                 
-                // Réinitialiser les articles
                 invoiceItems = [];
                 renderItemsListMobile();
                 
-                // Mettre à jour l'aperçu
                 updateInvoicePreview();
                 
                 showInvoiceStatus('Nouvelle facture prête !', 'success');
             }
+        }
+        
+        // Charger l'historique des factures
+        function loadInvoiceHistory(filteredInvoices = null) {
+            const invoiceList = document.getElementById('invoice-history-list');
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            const invoices = filteredInvoices || savedInvoices;
+            
+            if (invoices.length === 0) {
+                invoiceList.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #999; background: #f9f9f9; border-radius: 12px; border: 2px dashed #ddd;">
+                        <i class="fas fa-file-invoice" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p style="font-size: 18px; font-weight: 500;">Aucune facture enregistrée</p>
+                        <p style="font-size: 14px; margin-top: 10px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                            Créez votre première facture dans l'onglet "Facture"
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            invoiceList.innerHTML = '';
+            
+            invoices.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(invoice => {
+                // Calculer le total de la facture
+                let total = 0;
+                invoice.items.forEach(item => {
+                    const itemTotal = item.quantity * item.price;
+                    total += itemTotal + (itemTotal * (item.tax / 100));
+                });
+                
+                const card = document.createElement('div');
+                card.className = 'invoice-card';
+                card.innerHTML = `
+                    <div class="invoice-card-header">
+                        <div>
+                            <div class="invoice-card-title">${invoice.number}</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                                Client: ${invoice.client.name}
+                            </div>
+                        </div>
+                        <div class="invoice-card-actions">
+                            <div class="action-buttons-row">
+                                <button class="action-button-small btn-info" onclick="viewInvoice(${invoice.id})" style="background-color: #3b82f6;">
+                                    <i class="fas fa-eye"></i> Voir
+                                </button>
+                                <button class="action-button-small btn-whatsapp" onclick="resendInvoice(${invoice.id})" style="background-color: #25D366;">
+                                    <i class="fab fa-whatsapp"></i> Renvoyer
+                                </button>
+                                <button class="action-button-small btn-warning" onclick="printSavedInvoice(${invoice.id})" style="background-color: #f59e0b;">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-card-details">
+                        <div class="invoice-card-detail">
+                            <span class="invoice-card-label">Date facturation</span>
+                            <span>${invoice.date}</span>
+                        </div>
+                        <div class="invoice-card-detail">
+                            <span class="invoice-card-label">Date échéance</span>
+                            <span>${invoice.dueDate}</span>
+                        </div>
+                        <div class="invoice-card-detail">
+                            <span class="invoice-card-label">Téléphone</span>
+                            <span>${invoice.client.phone}</span>
+                        </div>
+                        <div class="invoice-card-detail">
+                            <span class="invoice-card-label">Méthode paiement</span>
+                            <span>${invoice.paymentMethod}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-card-total">
+                        Total: ${formatFCFA(total)}
+                    </div>
+                `;
+                invoiceList.appendChild(card);
+            });
+        }
+        
+        // Appliquer le filtre
+        function applyFilter() {
+            const clientFilter = document.getElementById('filter-client').value.toLowerCase();
+            const dateFrom = document.getElementById('filter-date-from').value;
+            const dateTo = document.getElementById('filter-date-to').value;
+            
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            
+            let filteredInvoices = savedInvoices;
+            
+            // Filtrer par nom de client
+            if (clientFilter) {
+                filteredInvoices = filteredInvoices.filter(invoice => 
+                    invoice.client.name.toLowerCase().includes(clientFilter)
+                );
+            }
+            
+            // Filtrer par date
+            if (dateFrom) {
+                filteredInvoices = filteredInvoices.filter(invoice => 
+                    invoice.date >= dateFrom
+                );
+            }
+            
+            if (dateTo) {
+                filteredInvoices = filteredInvoices.filter(invoice => 
+                    invoice.date <= dateTo
+                );
+            }
+            
+            loadInvoiceHistory(filteredInvoices);
+            
+            // Afficher le nombre de résultats
+            const invoiceList = document.getElementById('invoice-history-list');
+            const resultsCount = document.createElement('div');
+            resultsCount.style.cssText = 'text-align: center; padding: 10px; color: #666; font-size: 14px;';
+            resultsCount.innerHTML = `${filteredInvoices.length} facture(s) trouvée(s)`;
+            invoiceList.insertBefore(resultsCount, invoiceList.firstChild);
+        }
+        
+        // Effacer le filtre
+        function clearFilter() {
+            document.getElementById('filter-client').value = '';
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            loadInvoiceHistory();
+        }
+        
+        // Voir une facture
+        function viewInvoice(invoiceId) {
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            const invoice = savedInvoices.find(inv => inv.id === invoiceId);
+            
+            if (invoice) {
+                // Pré-remplir le formulaire avec les données de la facture
+                document.getElementById('client-name').value = invoice.client.name;
+                document.getElementById('client-phone').value = invoice.client.phone;
+                document.getElementById('client-email').value = invoice.client.email || '';
+                document.getElementById('client-address').value = invoice.client.address || '';
+                
+                document.getElementById('invoice-number').value = invoice.number;
+                document.getElementById('invoice-date').value = invoice.date;
+                document.getElementById('due-date').value = invoice.dueDate;
+                document.getElementById('payment-method').value = invoice.paymentMethod;
+                document.getElementById('invoice-notes').value = invoice.notes || '';
+                
+                // Charger les articles
+                invoiceItems = invoice.items;
+                renderItemsListMobile();
+                
+                // Charger les signatures si disponibles
+                if (invoice.clientSignature) {
+                    localStorage.setItem('clientSignature', invoice.clientSignature);
+                }
+                if (invoice.ownerSignature) {
+                    localStorage.setItem('ownerSignature', invoice.ownerSignature);
+                }
+                loadSavedSignatures();
+                
+                // Mettre à jour l'aperçu
+                updateInvoicePreview();
+                
+                // Basculer vers l'onglet facture
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                document.querySelector('[data-tab="client"]').classList.add('active');
+                document.getElementById('client-tab').classList.add('active');
+                
+                showInvoiceStatus('Facture chargée avec succès !', 'success');
+            }
+        }
+        
+        // Renvoyer une facture
+        function resendInvoice(invoiceId) {
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            const invoice = savedInvoices.find(inv => inv.id === invoiceId);
+            
+            if (invoice) {
+                sendWhatsAppMessage(invoice);
+                showInvoiceStatus('Facture renvoyée sur WhatsApp !', 'success');
+            }
+        }
+        
+        // Imprimer une facture sauvegardée
+        function printSavedInvoice(invoiceId) {
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            const invoice = savedInvoices.find(inv => inv.id === invoiceId);
+            
+            if (invoice) {
+                // Créer une nouvelle fenêtre pour l'impression
+                const printWindow = window.open('', '_blank');
+                
+                // Calculer les totaux
+                let subtotal = 0;
+                let taxAmount = 0;
+                let total = 0;
+                
+                invoice.items.forEach(item => {
+                    const itemTotal = item.quantity * item.price;
+                    subtotal += itemTotal;
+                    taxAmount += itemTotal * (item.tax / 100);
+                });
+                
+                total = subtotal + taxAmount;
+                const totalInWords = numberToFrenchWords(total);
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="fr">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Facture ESODI - ${invoice.number}</title>
+                        <style>
+                            @media print {
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    margin: 20px;
+                                    color: #333;
+                                }
+                                
+                                .print-area {
+                                    max-width: 800px;
+                                    margin: 0 auto;
+                                    padding: 20px;
+                                    background: white;
+                                }
+                                
+                                .print-header {
+                                    text-align: center;
+                                    margin-bottom: 30px;
+                                    border-bottom: 3px solid #006400;
+                                    padding-bottom: 20px;
+                                }
+                                
+                                .print-logo {
+                                    font-size: 48px;
+                                    background: #006400;
+                                    color: white;
+                                    width: 80px;
+                                    height: 80px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: 0 auto 15px;
+                                    font-weight: bold;
+                                }
+                                
+                                .print-section {
+                                    margin-bottom: 25px;
+                                    page-break-inside: avoid;
+                                }
+                                
+                                .print-table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin: 20px 0;
+                                }
+                                
+                                .print-table th {
+                                    background-color: #f0f0f0;
+                                    padding: 12px;
+                                    text-align: left;
+                                    border: 1px solid #ddd;
+                                    font-weight: bold;
+                                }
+                                
+                                .print-table td {
+                                    padding: 12px;
+                                    border: 1px solid #ddd;
+                                }
+                                
+                                .print-totals {
+                                    background-color: #f9f9f9;
+                                    padding: 20px;
+                                    border: 2px solid #006400;
+                                    margin-top: 30px;
+                                    page-break-inside: avoid;
+                                }
+                                
+                                .print-signatures {
+                                    margin-top: 50px;
+                                    padding-top: 30px;
+                                    border-top: 2px dashed #666;
+                                    page-break-inside: avoid;
+                                }
+                                
+                                h1, h2, h3 {
+                                    color: #006400;
+                                }
+                                
+                                .amount-in-words {
+                                    background-color: #f0fff0;
+                                    padding: 15px;
+                                    border-radius: 8px;
+                                    margin-top: 15px;
+                                    border-left: 4px solid #006400;
+                                }
+                                
+                                @page {
+                                    margin: 20mm;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="print-area">
+                            <div class="print-header">
+                                <div class="print-logo">ES</div>
+                                <h1 style="color: #006400; margin-bottom: 5px;">${ownerInfo.name}</h1>
+                                <p style="font-size: 16px;">${ownerInfo.address || 'Adresse à définir'}</p>
+                                <p style="font-size: 14px; margin-top: 5px;">
+                                    <strong>Téléphone:</strong> ${ownerInfo.phone} | 
+                                    <strong>Email:</strong> ${ownerInfo.email}
+                                </p>
+                            </div>
+                            
+                            <div class="print-section">
+                                <h2 style="color: #006400; border-bottom: 2px solid #006400; padding-bottom: 10px; margin-bottom: 20px;">
+                                    FACTURE N°: ${invoice.number}
+                                </h2>
+                                
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                                    <div style="flex: 1;">
+                                        <h3 style="color: #006400; margin-bottom: 10px;">Facturé à:</h3>
+                                        <p style="font-size: 16px; margin-bottom: 5px;"><strong>${invoice.client.name}</strong></p>
+                                        <p style="font-size: 14px;">${invoice.client.phone}</p>
+                                        ${invoice.client.email ? `<p style="font-size: 14px;">${invoice.client.email}</p>` : ''}
+                                        ${invoice.client.address ? `<p style="font-size: 14px;">${invoice.client.address}</p>` : ''}
+                                    </div>
+                                    
+                                    <div style="flex: 1; text-align: right;">
+                                        <h3 style="color: #006400; margin-bottom: 10px;">Détails facture:</h3>
+                                        <p style="font-size: 14px; margin-bottom: 5px;"><strong>Date facturation:</strong> ${invoice.date}</p>
+                                        <p style="font-size: 14px; margin-bottom: 5px;"><strong>Date échéance:</strong> ${invoice.dueDate}</p>
+                                        <p style="font-size: 14px;"><strong>Méthode paiement:</strong> ${invoice.paymentMethod}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="print-section">
+                                <h3 style="color: #006400; margin-bottom: 15px;">Articles et Services</h3>
+                                
+                                <table class="print-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Quantité</th>
+                                            <th>Prix unitaire</th>
+                                            <th>TVA</th>
+                                            <th>Total TTC</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${invoice.items.map(item => {
+                                            const itemTotal = item.quantity * item.price;
+                                            const itemTotalTTC = itemTotal + (itemTotal * (item.tax / 100));
+                                            return `
+                                                <tr>
+                                                    <td>${item.description}</td>
+                                                    <td>${item.quantity}</td>
+                                                    <td>${formatFCFA(item.price)}</td>
+                                                    <td>${item.tax}%</td>
+                                                    <td>${formatFCFA(itemTotalTTC)}</td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="print-totals">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="font-size: 16px;">Sous-total HT:</span>
+                                    <span style="font-size: 16px; font-weight: bold;">${formatFCFA(subtotal)}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="font-size: 16px;">TVA:</span>
+                                    <span style="font-size: 16px; font-weight: bold;">${formatFCFA(taxAmount)}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding-top: 15px; border-top: 2px solid #006400;">
+                                    <span style="font-size: 18px; font-weight: bold;">TOTAL TTC:</span>
+                                    <span style="font-size: 20px; font-weight: bold; color: #006400;">${formatFCFA(total)}</span>
+                                </div>
+                                
+                                <div class="amount-in-words" style="margin-top: 20px; padding: 15px; background: #f0fff0; border-radius: 8px;">
+                                    <p style="font-size: 16px;"><strong>Arrêtée à la somme de :</strong><br>${totalInWords}</p>
+                                </div>
+                            </div>
+                            
+                            ${invoice.notes ? `
+                                <div class="print-section">
+                                    <h3 style="color: #006400; margin-bottom: 10px;">Notes:</h3>
+                                    <p style="font-size: 14px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                                        ${invoice.notes}
+                                    </p>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="print-signatures">
+                                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                                    <div style="text-align: center; flex: 1;">
+                                        <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #666; padding-bottom: 5px; display: inline-block;">
+                                            Signature du Client
+                                        </p>
+                                        ${invoice.clientSignature ? 
+                                            `<img src="${invoice.clientSignature}" style="max-width: 200px; max-height: 80px; display: block; margin: 10px auto;" alt="Signature client">` :
+                                            '<div style="height: 80px; border-bottom: 1px solid #666; margin: 10px 0;"></div>'
+                                        }
+                                        <p style="margin-top: 10px; font-size: 14px;">${invoice.client.name}</p>
+                                        <p style="font-size: 12px; color: #666;">Date: ${invoice.date}</p>
+                                    </div>
+                                    
+                                    <div style="text-align: center; flex: 1;">
+                                        <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #666; padding-bottom: 5px; display: inline-block;">
+                                            Signature ESODI
+                                        </p>
+                                        ${invoice.ownerSignature ? 
+                                            `<img src="${invoice.ownerSignature}" style="max-width: 200px; max-height: 80px; display: block; margin: 10px auto;" alt="Signature ESODI">` :
+                                            '<div style="height: 80px; border-bottom: 1px solid #666; margin: 10px 0;"></div>'
+                                        }
+                                        <p style="margin-top: 10px; font-size: 14px;">${ownerInfo.name}</p>
+                                        <p style="font-size: 12px; color: #666;">Date: ${invoice.date}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 40px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
+                                <p>Merci pour votre confiance !</p>
+                                <p>ESODI - WhatsApp: ${ownerInfo.phone} - Email: ${ownerInfo.email}</p>
+                                <p>Cette facture a été générée électroniquement et ne nécessite pas de cachet</p>
+                            </div>
+                        </div>
+                        
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+            }
+        }
+        
+        // Initialiser les graphiques
+        function initCharts() {
+            const revenueCtx = document.getElementById('revenue-chart').getContext('2d');
+            const paymentCtx = document.getElementById('payment-chart').getContext('2d');
+            const clientsCtx = document.getElementById('clients-chart').getContext('2d');
+            
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Chiffre d\'affaires (FCFA)',
+                        data: [],
+                        borderColor: '#006400',
+                        backgroundColor: 'rgba(0, 100, 0, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatFCFA(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            paymentChart = new Chart(paymentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#25D366',
+                            '#3b82f6',
+                            '#f59e0b',
+                            '#ef4444'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            clientsChart = new Chart(clientsCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Chiffre d\'affaires (FCFA)',
+                        data: [],
+                        backgroundColor: '#006400'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatFCFA(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Mettre à jour les analyses
+        function updateAnalytics() {
+            const savedInvoices = JSON.parse(localStorage.getItem('savedInvoices') || '[]');
+            
+            if (savedInvoices.length === 0) {
+                resetAnalytics();
+                return;
+            }
+            
+            // Calculer les statistiques
+            let totalRevenue = 0;
+            let currentMonthRevenue = 0;
+            let lastMonthRevenue = 0;
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+            
+            // Groupement par mois pour le graphique
+            const monthlyData = {};
+            const paymentMethods = {};
+            const clientRevenues = {};
+            
+            savedInvoices.forEach(invoice => {
+                // Calculer le total de la facture
+                let invoiceTotal = 0;
+                invoice.items.forEach(item => {
+                    const itemTotal = item.quantity * item.price;
+                    invoiceTotal += itemTotal + (itemTotal * (item.tax / 100));
+                });
+                
+                totalRevenue += invoiceTotal;
+                
+                // Groupement par mois
+                const invoiceDate = new Date(invoice.date);
+                const monthYear = `${invoiceDate.getMonth() + 1}/${invoiceDate.getFullYear()}`;
+                
+                if (!monthlyData[monthYear]) {
+                    monthlyData[monthYear] = 0;
+                }
+                monthlyData[monthYear] += invoiceTotal;
+                
+                // Groupement par méthode de paiement
+                const paymentMethod = invoice.paymentMethod;
+                if (!paymentMethods[paymentMethod]) {
+                    paymentMethods[paymentMethod] = 0;
+                }
+                paymentMethods[paymentMethod] += invoiceTotal;
+                
+                // Groupement par client
+                const clientName = invoice.client.name;
+                if (!clientRevenues[clientName]) {
+                    clientRevenues[clientName] = 0;
+                }
+                clientRevenues[clientName] += invoiceTotal;
+                
+                // Revenus du mois en cours
+                if (invoiceDate.getMonth() === currentMonth && invoiceDate.getFullYear() === currentYear) {
+                    currentMonthRevenue += invoiceTotal;
+                }
+                
+                // Revenus du mois dernier
+                if (invoiceDate.getMonth() === lastMonth && invoiceDate.getFullYear() === lastMonthYear) {
+                    lastMonthRevenue += invoiceTotal;
+                }
+            });
+            
+            // Mettre à jour les cartes de statistiques
+            document.getElementById('total-revenue').textContent = formatFCFA(totalRevenue);
+            document.getElementById('total-invoices').textContent = savedInvoices.length;
+            document.getElementById('average-invoice').textContent = formatFCFA(totalRevenue / savedInvoices.length);
+            
+            // Compter les clients uniques
+            const uniqueClients = new Set(savedInvoices.map(inv => inv.client.name));
+            document.getElementById('active-clients').textContent = uniqueClients.size;
+            
+            // Calculer les pourcentages de changement
+            const revenueChange = lastMonthRevenue > 0 ? 
+                ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1) : 0;
+            const revenueChangeEl = document.getElementById('revenue-change');
+            revenueChangeEl.textContent = revenueChange >= 0 ? 
+                `+${revenueChange}% vs mois dernier` : 
+                `${revenueChange}% vs mois dernier`;
+            revenueChangeEl.className = revenueChange >= 0 ? 'stat-change' : 'stat-change negative';
+            
+            // Mettre à jour le graphique de revenus
+            const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+                const [aMonth, aYear] = a.split('/').map(Number);
+                const [bMonth, bYear] = b.split('/').map(Number);
+                return aYear - bYear || aMonth - bMonth;
+            });
+            
+            revenueChart.data.labels = sortedMonths;
+            revenueChart.data.datasets[0].data = sortedMonths.map(month => monthlyData[month]);
+            revenueChart.update();
+            
+            // Mettre à jour le graphique des méthodes de paiement
+            paymentChart.data.labels = Object.keys(paymentMethods);
+            paymentChart.data.datasets[0].data = Object.values(paymentMethods);
+            paymentChart.update();
+            
+            // Mettre à jour le graphique des clients (top 5)
+            const sortedClients = Object.entries(clientRevenues)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            clientsChart.data.labels = sortedClients.map(client => client[0]);
+            clientsChart.data.datasets[0].data = sortedClients.map(client => client[1]);
+            clientsChart.update();
+        }
+        
+        // Réinitialiser les analyses
+        function resetAnalytics() {
+            document.getElementById('total-revenue').textContent = '0 FCFA';
+            document.getElementById('total-invoices').textContent = '0';
+            document.getElementById('average-invoice').textContent = '0 FCFA';
+            document.getElementById('active-clients').textContent = '0';
+            document.getElementById('revenue-change').textContent = '+0% vs mois dernier';
+            
+            // Réinitialiser les graphiques
+            revenueChart.data.labels = [];
+            revenueChart.data.datasets[0].data = [];
+            revenueChart.update();
+            
+            paymentChart.data.labels = [];
+            paymentChart.data.datasets[0].data = [];
+            paymentChart.update();
+            
+            clientsChart.data.labels = [];
+            clientsChart.data.datasets[0].data = [];
+            clientsChart.update();
         }
         
         // Afficher un message de statut
