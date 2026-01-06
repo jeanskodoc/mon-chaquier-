@@ -2,21 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ESODI - Accès Application</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        html {
+            height: 100%;
+            overflow: hidden;
         }
         
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
-            position: relative;
+            min-height: -webkit-fill-available;
+            height: 100%;
+            position: fixed;
+            width: 100%;
             overflow: hidden;
             background: #000;
+            touch-action: manipulation;
         }
         
         .background-image {
@@ -26,25 +37,38 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             z-index: 0;
+            user-select: none;
+            -webkit-user-drag: none;
         }
         
         .access-button-container {
             position: fixed;
-            bottom: 30px;
+            bottom: env(safe-area-inset-bottom, 20px);
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
             text-align: center;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 50px;
-            background-color: rgba(0, 100, 0, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-            max-width: 90%;
-            width: 300px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(0, 100, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-width: 92%;
+            width: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Pour les téléphones avec notch/trou */
+        @supports (padding: max(0px)) {
+            .access-button-container {
+                bottom: max(20px, env(safe-area-inset-bottom));
+            }
         }
         
         .access-button {
@@ -54,89 +78,90 @@
             background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
             font-size: 16px;
-            font-weight: bold;
-            padding: 12px 25px;
+            font-weight: 600;
+            padding: 14px 28px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 3px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid white;
             width: 100%;
-        }
-        
-        .access-button i {
-            margin-right: 8px;
-            font-size: 14px;
-        }
-        
-        .access-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+            min-height: 48px;
+            cursor: pointer;
+            user-select: none;
         }
         
         .access-button:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
+            box-shadow: 
+                0 1px 4px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.1s;
         }
         
-        /* Animation discrète */
-        @keyframes subtleFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-3px);
-            }
+        .access-button i {
+            margin-right: 10px;
+            font-size: 18px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
         }
         
-        .access-button-container {
-            animation: subtleFloat 3s infinite ease-in-out;
-        }
-        
-        /* Logo minimal en haut */
+        /* Logo minimal en haut avec support safe area */
         .logo-top {
             position: fixed;
-            top: 20px;
+            top: env(safe-area-inset-top, 15px);
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
             text-align: center;
             color: white;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            background-color: rgba(0, 100, 0, 0.6);
-            padding: 8px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            text-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.8),
+                0 0 1px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 100, 0, 0.7);
+            padding: 10px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 90%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
         }
         
         .logo-top h1 {
             font-size: 18px;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         
         .logo-top p {
             font-size: 12px;
-            opacity: 0.9;
+            opacity: 0.95;
+            font-weight: 400;
         }
         
-        /* Responsive */
-        @media (max-width: 480px) {
+        /* Mode paysage */
+        @media (orientation: landscape) {
             .access-button-container {
-                width: 250px;
-                padding: 12px 20px;
-                bottom: 20px;
+                width: 240px;
+                padding: 10px 18px;
+                bottom: 15px;
             }
             
             .access-button {
-                font-size: 14px;
-                padding: 10px 20px;
+                padding: 12px 22px;
+                font-size: 15px;
+                min-height: 44px;
             }
             
             .logo-top {
-                top: 15px;
-                padding: 6px 15px;
+                padding: 8px 20px;
+                top: max(10px, env(safe-area-inset-top));
             }
             
             .logo-top h1 {
@@ -144,22 +169,126 @@
             }
         }
         
-        @media (max-width: 320px) {
+        /* Petits écrans */
+        @media (max-width: 360px) and (orientation: portrait) {
             .access-button-container {
-                width: 220px;
+                width: 260px;
+                padding: 10px 18px;
             }
             
             .access-button {
-                font-size: 13px;
-                padding: 8px 18px;
+                font-size: 15px;
+                padding: 13px 24px;
+                min-height: 46px;
             }
+            
+            .logo-top {
+                padding: 8px 20px;
+            }
+        }
+        
+        /* Très petits écrans */
+        @media (max-width: 320px) {
+            .access-button-container {
+                width: 240px;
+            }
+            
+            .access-button {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+            
+            .logo-top h1 {
+                font-size: 16px;
+            }
+        }
+        
+        /* Écrans très grands */
+        @media (min-width: 768px) {
+            .access-button-container {
+                width: 320px;
+                padding: 15px 25px;
+            }
+            
+            .access-button {
+                font-size: 18px;
+                padding: 16px 32px;
+                min-height: 52px;
+            }
+            
+            .logo-top {
+                padding: 12px 28px;
+            }
+            
+            .logo-top h1 {
+                font-size: 20px;
+            }
+            
+            .logo-top p {
+                font-size: 13px;
+            }
+        }
+        
+        /* Mode sombre */
+        @media (prefers-color-scheme: dark) {
+            .access-button-container {
+                background-color: rgba(0, 100, 0, 0.9);
+                border-color: rgba(255, 255, 255, 0.15);
+            }
+            
+            .logo-top {
+                background-color: rgba(0, 100, 0, 0.8);
+                border-color: rgba(255, 255, 255, 0.15);
+            }
+            
+            .access-button {
+                border-color: rgba(255, 255, 255, 0.9);
+            }
+        }
+        
+        /* Support PWA - plein écran */
+        @media (display-mode: fullscreen) {
+            body {
+                background: #000;
+            }
+        }
+        
+        /* Prévenir le zoom sur iOS */
+        input, textarea, select, button {
+            font-size: 16px;
+        }
+        
+        /* Animation subtile pour le bouton */
+        @keyframes gentlePulse {
+            0%, 100% {
+                box-shadow: 
+                    0 3px 8px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 3px 12px rgba(37, 211, 102, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .access-button {
+            animation: gentlePulse 3s infinite ease-in-out;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
 </head>
 <body>
-    <!-- Image de fond -->
-    <img src="page de fond chequier.jpeg" alt="Fond Chéquier Numérique" class="background-image">
+    <!-- Image de fond optimisée mobile -->
+    <img 
+        src="page de fond chequier.jpeg" 
+        alt="ESODI Digital - Chéquier et Factures"
+        class="background-image"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+    >
     
     <!-- Logo minimal en haut -->
     <div class="logo-top">
@@ -169,65 +298,130 @@
     
     <!-- Bouton d'accès en bas -->
     <div class="access-button-container">
-        <a href="https://jeanskodoc.github.io/CHEQUIER-DIGITALE-/" class="access-button" target="_blank">
-            <i class="fas fa-external-link-alt"></i> Accéder
+        <a href="https://jeanskodoc.github.io/CHEQUIER-DIGITALE-/" 
+           class="access-button" 
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Accéder à l'application ESODI Digital">
+            <i class="fas fa-external-link-alt"></i> ACCÉDER
         </a>
     </div>
 
     <script>
-        // Gestion de l'image de fond
+        // Optimisations pour mobile
         document.addEventListener('DOMContentLoaded', function() {
-            const bgImage = document.querySelector('.background-image');
+            // Prévenir les comportements par défaut indésirables
+            document.addEventListener('touchstart', function(e) {
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                    e.preventDefault();
+                }
+            }, { passive: false });
             
-            // Charger l'image avec un fallback
+            // Désactiver le menu contextuel sur le bouton
+            document.querySelector('.access-button').addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Gestion de l'image de fond avec timeout pour les connexions lentes
+            const bgImage = document.querySelector('.background-image');
+            let imageLoaded = false;
+            
+            const imageLoadTimeout = setTimeout(function() {
+                if (!imageLoaded) {
+                    console.log("Timeout chargement image, utilisation du fallback");
+                    setFallbackBackground();
+                }
+            }, 3000);
+            
             bgImage.onload = function() {
-                console.log("Image de fond chargée avec succès");
+                imageLoaded = true;
+                clearTimeout(imageLoadTimeout);
+                console.log("Image chargée avec succès");
+                // Optimiser l'affichage
+                this.style.opacity = '1';
+                this.style.transition = 'opacity 0.5s ease';
             };
             
             bgImage.onerror = function() {
-                console.log("Image de fond non chargée, utilisation d'un fond alternatif");
-                // Utiliser un fond de secours
-                document.body.style.background = "linear-gradient(135deg, #006400 0%, #228B22 100%)";
+                imageLoaded = true;
+                clearTimeout(imageLoadTimeout);
+                console.log("Erreur chargement image, fallback activé");
+                setFallbackBackground();
                 this.style.display = 'none';
-                
-                // Créer un fallback visuel
-                const fallbackText = document.createElement('div');
-                fallbackText.style.position = 'absolute';
-                fallbackText.style.top = '50%';
-                fallbackText.style.left = '50%';
-                fallbackText.style.transform = 'translate(-50%, -50%)';
-                fallbackText.style.color = 'white';
-                fallbackText.style.textAlign = 'center';
-                fallbackText.style.zIndex = '1';
-                fallbackText.innerHTML = '<h2>ESODI DIGITAL</h2><p>Chéquier et Factures Numériques</p>';
-                document.body.appendChild(fallbackText);
             };
-        });
-        
-        // Animation au clic du bouton
-        document.querySelector('.access-button').addEventListener('click', function(e) {
-            // Petite animation au clic
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                if (this.style.transform === 'scale(0.95)') {
-                    this.style.transform = 'scale(1)';
+            
+            function setFallbackBackground() {
+                document.body.style.background = "linear-gradient(135deg, #006400 0%, #228B22 100%)";
+                
+                // Ajouter un overlay texturé
+                const overlay = document.createElement('div');
+                overlay.style.position = 'absolute';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundImage = 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 1px, transparent 1px)';
+                overlay.style.backgroundSize = '40px 40px';
+                overlay.style.zIndex = '0';
+                overlay.style.pointerEvents = 'none';
+                document.body.appendChild(overlay);
+            }
+            
+            // Détection de l'orientation
+            function handleOrientationChange() {
+                const isPortrait = window.innerHeight > window.innerWidth;
+                console.log("Orientation:", isPortrait ? "Portrait" : "Paysage");
+            }
+            
+            window.addEventListener('resize', handleOrientationChange);
+            window.addEventListener('orientationchange', handleOrientationChange);
+            
+            // Feedback haptique sur mobile (si supporté)
+            const accessButton = document.querySelector('.access-button');
+            accessButton.addEventListener('touchstart', function() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(20);
                 }
-            }, 150);
-        });
-        
-        // Arrêter l'animation flottante au survol
-        const buttonContainer = document.querySelector('.access-button-container');
-        const accessButton = document.querySelector('.access-button');
-        
-        if (buttonContainer && accessButton) {
-            accessButton.addEventListener('mouseenter', function() {
-                buttonContainer.style.animation = 'none';
+                this.style.transform = 'scale(0.95)';
             });
             
-            accessButton.addEventListener('mouseleave', function() {
-                buttonContainer.style.animation = 'subtleFloat 3s infinite ease-in-out';
+            accessButton.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
             });
-        }
+            
+            // Prévenir le scroll indésirable
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target.tagName !== 'IMG') {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Optimisation pour PWA
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log("Application en mode standalone (PWA)");
+                document.body.classList.add('standalone');
+            }
+        });
+        
+        // Gestion du offline
+        window.addEventListener('offline', function() {
+            console.log("Mode hors ligne");
+            const button = document.querySelector('.access-button');
+            button.style.opacity = '0.7';
+            button.style.cursor = 'not-allowed';
+            button.title = "Connexion nécessaire";
+        });
+        
+        window.addEventListener('online', function() {
+            console.log("Mode en ligne");
+            const button = document.querySelector('.access-button');
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+            button.title = "";
+        });
     </script>
 </body>
 </html>
