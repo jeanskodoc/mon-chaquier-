@@ -40,6 +40,7 @@
             border-radius: 50px;
             background-color: rgba(0, 100, 0, 0.7);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
             max-width: 90%;
             width: 300px;
@@ -106,6 +107,7 @@
             padding: 8px 20px;
             border-radius: 10px;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
@@ -177,21 +179,29 @@
         document.addEventListener('DOMContentLoaded', function() {
             const bgImage = document.querySelector('.background-image');
             
-            // Si l'image ne se charge pas, ajouter un fond de secours
-            bgImage.onerror = function() {
-                console.log("Image de fond non chargée, utilisation d'un fond alternatif");
-                document.body.style.background = "linear-gradient(135deg, #006400 0%, #228B22 100%)";
-                this.style.display = 'none';
+            // Charger l'image avec un fallback
+            bgImage.onload = function() {
+                console.log("Image de fond chargée avec succès");
             };
             
-            // Vérifier si l'image est déjà chargée
-            if (bgImage.complete && bgImage.naturalWidth > 0) {
-                // Image chargée avec succès
-                console.log("Image de fond chargée");
-            } else if (bgImage.complete) {
-                // Image échouée
-                bgImage.onerror();
-            }
+            bgImage.onerror = function() {
+                console.log("Image de fond non chargée, utilisation d'un fond alternatif");
+                // Utiliser un fond de secours
+                document.body.style.background = "linear-gradient(135deg, #006400 0%, #228B22 100%)";
+                this.style.display = 'none';
+                
+                // Créer un fallback visuel
+                const fallbackText = document.createElement('div');
+                fallbackText.style.position = 'absolute';
+                fallbackText.style.top = '50%';
+                fallbackText.style.left = '50%';
+                fallbackText.style.transform = 'translate(-50%, -50%)';
+                fallbackText.style.color = 'white';
+                fallbackText.style.textAlign = 'center';
+                fallbackText.style.zIndex = '1';
+                fallbackText.innerHTML = '<h2>ESODI DIGITAL</h2><p>Chéquier et Factures Numériques</p>';
+                document.body.appendChild(fallbackText);
+            };
         });
         
         // Animation au clic du bouton
@@ -199,7 +209,9 @@
             // Petite animation au clic
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                this.style.transform = 'scale(1)';
+                if (this.style.transform === 'scale(0.95)') {
+                    this.style.transform = 'scale(1)';
+                }
             }, 150);
         });
         
@@ -207,13 +219,15 @@
         const buttonContainer = document.querySelector('.access-button-container');
         const accessButton = document.querySelector('.access-button');
         
-        accessButton.addEventListener('mouseenter', function() {
-            buttonContainer.style.animation = 'none';
-        });
-        
-        accessButton.addEventListener('mouseleave', function() {
-            buttonContainer.style.animation = 'subtleFloat 3s infinite ease-in-out';
-        });
+        if (buttonContainer && accessButton) {
+            accessButton.addEventListener('mouseenter', function() {
+                buttonContainer.style.animation = 'none';
+            });
+            
+            accessButton.addEventListener('mouseleave', function() {
+                buttonContainer.style.animation = 'subtleFloat 3s infinite ease-in-out';
+            });
+        }
     </script>
 </body>
 </html>
