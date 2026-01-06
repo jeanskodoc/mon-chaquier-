@@ -14,9 +14,6 @@
         body {
             font-family: Arial, sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             position: relative;
             overflow: hidden;
             background: #000;
@@ -32,124 +29,127 @@
             z-index: 0;
         }
         
-        .access-container {
-            position: relative;
-            z-index: 1;
+        .access-button-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
             text-align: center;
-            padding: 30px;
-            border-radius: 15px;
-            background-color: rgba(0, 100, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            background-color: rgba(0, 100, 0, 0.7);
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
             max-width: 90%;
-            width: 400px;
-        }
-        
-        .logo {
-            margin-bottom: 30px;
-            color: white;
-        }
-        
-        .logo h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo p {
-            font-size: 16px;
-            opacity: 0.9;
+            width: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
         .access-button {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
-            padding: 20px 40px;
+            padding: 12px 25px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
-            border: 3px solid white;
-            position: relative;
-            overflow: hidden;
+            border: 2px solid white;
+            width: 100%;
         }
         
         .access-button i {
-            margin-right: 10px;
+            margin-right: 8px;
+            font-size: 14px;
         }
         
         .access-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
         }
         
         .access-button:active {
-            transform: scale(1.05);
+            transform: scale(0.98);
         }
         
-        .access-button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.1) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            transform: rotate(30deg);
-            transition: all 0.5s ease;
-        }
-        
-        .access-button:hover::after {
-            left: 150%;
-        }
-        
-        .note {
-            margin-top: 20px;
-            color: white;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        
-        /* Animation de pulsation */
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        /* Animation discrète */
+        @keyframes subtleFloat {
+            0%, 100% {
+                transform: translateY(0);
             }
             50% {
-                box-shadow: 0 5px 25px rgba(37, 211, 102, 0.8);
-            }
-            100% {
-                box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+                transform: translateY(-3px);
             }
         }
         
-        .access-button {
-            animation: pulse 2s infinite;
+        .access-button-container {
+            animation: subtleFloat 3s infinite ease-in-out;
+        }
+        
+        /* Logo minimal en haut */
+        .logo-top {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 100, 0, 0.6);
+            padding: 8px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-top h1 {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        
+        .logo-top p {
+            font-size: 12px;
+            opacity: 0.9;
         }
         
         /* Responsive */
         @media (max-width: 480px) {
-            .access-container {
-                padding: 20px;
-                width: 90%;
-            }
-            
-            .logo h1 {
-                font-size: 26px;
+            .access-button-container {
+                width: 250px;
+                padding: 12px 20px;
+                bottom: 20px;
             }
             
             .access-button {
-                font-size: 18px;
-                padding: 18px 35px;
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+            
+            .logo-top {
+                top: 15px;
+                padding: 6px 15px;
+            }
+            
+            .logo-top h1 {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .access-button-container {
+                width: 220px;
+            }
+            
+            .access-button {
+                font-size: 13px;
+                padding: 8px 18px;
             }
         }
     </style>
@@ -159,17 +159,17 @@
     <!-- Image de fond -->
     <img src="page de fond chequier.jpeg" alt="Fond Chéquier Numérique" class="background-image">
     
-    <div class="access-container">
-        <div class="logo">
-            <h1>ESODI DIGITAL</h1>
-            <p>Factures & Chèques Numériques</p>
-        </div>
-        
+    <!-- Logo minimal en haut -->
+    <div class="logo-top">
+        <h1>ESODI DIGITAL</h1>
+        <p>Chéquier & Factures</p>
+    </div>
+    
+    <!-- Bouton d'accès en bas -->
+    <div class="access-button-container">
         <a href="https://jeanskodoc.github.io/CHEQUIER-DIGITALE-/" class="access-button" target="_blank">
-            <i class="fas fa-external-link-alt"></i> ACCÉDER À L'APPLICATION
+            <i class="fas fa-external-link-alt"></i> Accéder
         </a>
-        
-        <p class="note">Cliquez pour ouvrir l'application dans un nouvel onglet</p>
     </div>
 
     <script>
@@ -184,7 +184,7 @@
                 this.style.display = 'none';
             };
             
-            // Vérifier si l'image est déjà chargée (cache)
+            // Vérifier si l'image est déjà chargée
             if (bgImage.complete && bgImage.naturalWidth > 0) {
                 // Image chargée avec succès
                 console.log("Image de fond chargée");
@@ -192,27 +192,27 @@
                 // Image échouée
                 bgImage.onerror();
             }
-            
-            // Animation du bouton au survol
-            const button = document.querySelector('.access-button');
-            button.addEventListener('mouseenter', function() {
-                this.style.animation = 'none';
-            });
-            
-            button.addEventListener('mouseleave', function() {
-                this.style.animation = 'pulse 2s infinite';
-            });
         });
         
-        // Effet de transition pour le bouton
+        // Animation au clic du bouton
         document.querySelector('.access-button').addEventListener('click', function(e) {
             // Petite animation au clic
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                this.style.transform = 'scale(1.1)';
+                this.style.transform = 'scale(1)';
             }, 150);
-            
-            // Le lien s'ouvre dans un nouvel onglet (déjà géré par target="_blank")
+        });
+        
+        // Arrêter l'animation flottante au survol
+        const buttonContainer = document.querySelector('.access-button-container');
+        const accessButton = document.querySelector('.access-button');
+        
+        accessButton.addEventListener('mouseenter', function() {
+            buttonContainer.style.animation = 'none';
+        });
+        
+        accessButton.addEventListener('mouseleave', function() {
+            buttonContainer.style.animation = 'subtleFloat 3s infinite ease-in-out';
         });
     </script>
 </body>
