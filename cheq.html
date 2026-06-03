@@ -32,7 +32,7 @@
             overflow-x: hidden;
         }
         
-        /* CONTAINER MOBILE */
+        /* CONTAINER */
         .container {
             width: 100%;
             max-width: 100%;
@@ -44,7 +44,7 @@
             position: relative;
         }
         
-        /* HEADER MOBILE */
+        /* HEADER */
         header {
             background: linear-gradient(135deg, #006400 0%, #228B22 100%);
             color: white;
@@ -100,7 +100,7 @@
             gap: 6px;
         }
         
-        /* TABS MOBILE */
+        /* TABS */
         .tabs {
             display: flex;
             background-color: #f0f4f8;
@@ -110,6 +110,12 @@
             z-index: 100;
             overflow-x: auto;
             white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
         
         .tab {
@@ -133,7 +139,7 @@
             border-bottom: 3px solid #006400;
         }
         
-        /* TAB CONTENT MOBILE */
+        /* TAB CONTENT */
         .tab-content {
             display: none;
             padding: 20px 15px;
@@ -149,7 +155,7 @@
             to { opacity: 1; }
         }
         
-        /* FORM SECTIONS MOBILE */
+        /* FORM SECTIONS */
         .form-section {
             margin-bottom: 25px;
         }
@@ -222,7 +228,7 @@
             resize: vertical;
         }
         
-        /* BOUTONS MOBILE */
+        /* BOUTONS */
         .btn {
             padding: 16px 20px;
             border: none;
@@ -282,7 +288,7 @@
             border-top: 2px solid #eee;
         }
         
-        /* PREVIEW FACTURE MOBILE */
+        /* PREVIEW FACTURE */
         .invoice-preview {
             background-color: #f9fafb;
             border-radius: 12px;
@@ -388,7 +394,7 @@
             display: inline-block;
         }
         
-        /* SIGNATURE MOBILE */
+        /* SIGNATURE */
         .signature-section {
             margin-top: 30px;
             padding-top: 20px;
@@ -480,7 +486,7 @@
             flex: 1;
         }
         
-        /* STATUS MESSAGES MOBILE */
+        /* STATUS MESSAGES */
         .status-message {
             padding: 15px;
             border-radius: 10px;
@@ -502,7 +508,7 @@
             border: 1px solid #fecaca;
         }
         
-        /* WHATSAPP AUTO OPTION MOBILE */
+        /* WHATSAPP AUTO OPTION */
         .whatsapp-auto-option {
             background-color: #e8f5e9;
             padding: 15px;
@@ -564,7 +570,7 @@
             transform: translateX(26px);
         }
         
-        /* FOOTER MOBILE */
+        /* FOOTER */
         footer {
             text-align: center;
             padding: 20px 15px;
@@ -674,6 +680,8 @@
             margin-bottom: 15px;
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .invoice-card-title {
@@ -793,125 +801,53 @@
             position: relative;
         }
         
-        /* PRINT STYLES - CORRIGÉ */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            
-            .print-area, .print-area * {
-                visibility: visible;
-            }
-            
-            .print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-                padding: 20px;
-                margin: 0;
-                box-shadow: none;
-                border: none;
-            }
-            
-            .no-print {
-                display: none !important;
-            }
-            
-            .print-header {
-                text-align: center;
-                margin-bottom: 30px;
-                border-bottom: 3px solid #006400;
-                padding-bottom: 20px;
-            }
-            
-            .print-logo {
-                font-size: 48px;
-                background: #006400;
-                color: white;
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
+        /* ========================================
+           UTILITY
+           ======================================== */
+        .hidden {
+            display: none !important;
+        }
+        
+        .print-area {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .action-buttons-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ========================================
+           RESPONSIVE BREAKPOINTS
+           ======================================== */
+        
+        /* --- Large screens --- */
+        @media (min-width: 1200px) {
+            .container { max-width: 1140px; border-radius: 20px; }
+            body { padding: 30px; }
+            header { padding: 30px 40px; }
+            header h1 { font-size: 26px; }
+            .tab-content { padding: 30px; }
+            .logo-icon { width: 60px; height: 60px; font-size: 32px; }
+        }
+        
+        /* --- Desktop --- */
+        @media (min-width: 992px) {
+            .container { max-width: 960px; }
+            .invoice-card-actions .action-buttons-row {
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 15px;
-                font-weight: bold;
-            }
-            
-            .print-section {
-                margin-bottom: 25px;
-                page-break-inside: avoid;
-            }
-            
-            .print-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 20px 0;
-            }
-            
-            .print-table th {
-                background-color: #f0f0f0;
-                padding: 12px;
-                text-align: left;
-                border: 1px solid #ddd;
-                font-weight: bold;
-            }
-            
-            .print-table td {
-                padding: 12px;
-                border: 1px solid #ddd;
-            }
-            
-            .print-totals {
-                background-color: #f9f9f9;
-                padding: 20px;
-                border: 2px solid #006400;
-                margin-top: 30px;
-                page-break-inside: avoid;
-            }
-            
-            .print-signatures {
-                margin-top: 50px;
-                padding-top: 30px;
-                border-top: 2px dashed #666;
-                page-break-inside: avoid;
+                gap: 8px;
             }
         }
         
-        /* MEDIA QUERIES */
-        @media (min-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            header h1 {
-                font-size: 22px;
-            }
-            
-            .tab {
-                font-size: 15px;
-                padding: 16px 12px;
-            }
-            
-            .btn {
-                padding: 16px 24px;
-            }
-            
-            .analytics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
+        /* --- Tablet landscape & small desktop --- */
         @media (min-width: 768px) {
-            body {
-                padding: 20px;
-            }
+            body { padding: 20px; }
             
-            .container {
-                max-width: 95%;
-            }
+            .container { max-width: 95%; }
             
             .form-row {
                 flex-direction: row;
@@ -959,15 +895,160 @@
                 grid-template-columns: repeat(4, 1fr);
             }
             
-            .action-buttons-row {
-                display: flex;
-                gap: 10px;
-            }
-            
             .action-button-small {
                 min-width: auto;
                 flex: 1;
             }
+            
+            .invoice-card-header {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            
+            .tab {
+                padding: 16px 12px;
+                font-size: 15px;
+            }
+        }
+        
+        /* --- Tablet portrait --- */
+        @media (max-width: 767px) {
+            .container { border-radius: 12px; }
+            header { padding: 15px 12px; }
+            header h1 { font-size: 17px; }
+            header p { font-size: 12px; }
+            .logo-icon { width: 42px; height: 42px; font-size: 22px; }
+            .tab-content { padding: 15px 12px; }
+            .tab { padding: 14px 6px; font-size: 13px; min-width: 70px; }
+            .section-title { font-size: 15px; }
+            .invoice-card-title { font-size: 16px; }
+            .invoice-card-details { grid-template-columns: 1fr 1fr; }
+            .invoice-card-actions { width: 100%; }
+            .invoice-card-actions .action-buttons-row { display: flex; gap: 8px; width: 100%; }
+            .action-button-small { min-width: 0; flex: 1; font-size: 12px; padding: 8px 10px; }
+            .chart-container { height: 250px; }
+            .stat-value { font-size: 24px; }
+            .item-card-details { grid-template-columns: 1fr 1fr; }
+            .whatsapp-auto-notice { font-size: 11px; padding: 6px 10px; }
+            .invoice-preview { padding: 15px; max-height: 400px; }
+            .signature-pad-container { height: 130px; }
+        }
+        
+        /* --- Mobile --- */
+        @media (max-width: 599px) {
+            body { padding: 6px; }
+            .container { border-radius: 10px; }
+            header { padding: 12px 10px; }
+            header h1 { font-size: 15px; }
+            .logo-icon { width: 36px; height: 36px; font-size: 18px; }
+            .logo-container { gap: 8px; }
+            .tab-content { padding: 12px 10px; }
+            .tab { padding: 12px 4px; font-size: 11px; min-width: 55px; }
+            .btn { padding: 14px 16px; font-size: 14px; min-height: 48px; }
+            input, textarea, select { padding: 12px 10px; font-size: 15px; }
+            .section-title { font-size: 14px; }
+            .section-title i { font-size: 15px; width: 20px; }
+            .form-row { gap: 12px; }
+            .invoice-card { padding: 15px; }
+            .invoice-card-title { font-size: 14px; }
+            .invoice-card-details { grid-template-columns: 1fr; gap: 8px; font-size: 13px; }
+            .invoice-card-actions .action-buttons-row { flex-direction: column; gap: 6px; }
+            .action-button-small { font-size: 13px; padding: 10px; }
+            .invoice-card-total { font-size: 14px; padding: 10px 12px; }
+            .filter-section { padding: 15px; }
+            .filter-row { gap: 12px; }
+            .analytics-grid { gap: 15px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 22px; }
+            .chart-container { height: 220px; padding: 15px; }
+            .chart-container h3 { font-size: 14px; }
+            .invoice-item-mobile { padding: 12px; }
+            .invoice-totals { padding: 15px; }
+            .total-row { font-size: 13px; }
+            .total-row:last-child { font-size: 15px; }
+            .amount-in-words { font-size: 13px; padding: 12px; }
+            .item-card { padding: 12px; }
+            .item-card-title { font-size: 14px; }
+            .item-card-details { grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+            .invoice-header { gap: 15px; }
+            .company-logo { gap: 10px; }
+            .logo-preview { width: 50px; height: 50px; font-size: 20px; }
+            .invoice-preview { padding: 12px; max-height: 350px; }
+            .signature-pad-container { height: 120px; }
+            .signature-instructions { font-size: 12px; }
+            .signature-instructions i { font-size: 24px; }
+            .signature-clear, .signature-save { font-size: 12px; padding: 8px 12px; }
+            .whatsapp-auto-option { padding: 12px; }
+            .whatsapp-auto-option h3 { font-size: 14px; }
+            footer { padding: 15px 12px; font-size: 11px; }
+            .currency-badge { font-size: 10px; padding: 3px 6px; }
+        }
+        
+        /* --- Small mobile --- */
+        @media (max-width: 479px) {
+            body { padding: 4px; }
+            header { padding: 10px 8px; }
+            header h1 { font-size: 14px; }
+            header p { font-size: 11px; }
+            .logo-icon { width: 32px; height: 32px; font-size: 15px; }
+            .logo-container { gap: 6px; }
+            .whatsapp-auto-notice { font-size: 10px; padding: 5px 8px; margin-top: 8px; gap: 4px; }
+            .tab-content { padding: 10px 8px; }
+            .tab { padding: 10px 3px; font-size: 10px; min-width: 45px; }
+            .section-title { font-size: 13px; margin-bottom: 10px; }
+            .section-title i { font-size: 13px; width: 18px; }
+            .btn { font-size: 13px; padding: 12px 14px; min-height: 44px; }
+            input, textarea, select { padding: 10px 8px; font-size: 14px; }
+            .form-row { gap: 10px; }
+            .invoice-card { padding: 12px; }
+            .invoice-card-header { flex-direction: column; gap: 8px; }
+            .invoice-card-title { font-size: 13px; }
+            .invoice-card-details { font-size: 12px; }
+            .action-button-small { font-size: 12px; padding: 8px; }
+            .invoice-card-total { font-size: 13px; }
+            .filter-section { padding: 12px; }
+            .analytics-grid { gap: 12px; }
+            .stat-card { padding: 12px; }
+            .stat-value { font-size: 18px; }
+            .stat-card h3 { font-size: 12px; }
+            .chart-container { height: 200px; padding: 12px; }
+            .chart-container h3 { font-size: 12px; margin-bottom: 15px; }
+            .invoice-preview { padding: 10px; max-height: 300px; }
+            .signature-pad-container { height: 100px; }
+            .signature-actions { gap: 8px; }
+            .signature-clear, .signature-save { font-size: 11px; padding: 6px 10px; }
+            .invoice-item-mobile { padding: 10px; }
+            .invoice-totals { padding: 12px; }
+            .total-row { font-size: 12px; padding-bottom: 10px; }
+            .total-row:last-child { font-size: 14px; }
+            .amount-in-words { font-size: 12px; padding: 10px; }
+            .item-card { padding: 10px; }
+            .item-card-title { font-size: 13px; }
+            .item-card-details { font-size: 12px; }
+            .logo-preview { width: 40px; height: 40px; font-size: 16px; }
+            .invoice-details { gap: 15px; }
+            footer { padding: 12px 10px; font-size: 10px; }
+            .auto-whatsapp-toggle { flex-direction: column; gap: 8px; align-items: flex-start; }
+            .action-buttons { gap: 8px; margin-top: 20px; padding-top: 15px; }
+        }
+        
+        /* --- Very small screens --- */
+        @media (max-width: 359px) {
+            .tab { min-width: 35px; font-size: 8px; padding: 8px 2px; }
+            .logo-icon { display: none; }
+            .btn { font-size: 12px; padding: 10px 12px; }
+            .stat-value { font-size: 16px; }
+            .chart-container { height: 180px; }
+            .invoice-preview { max-height: 250px; }
+            .invoice-card-details { grid-template-columns: 1fr; }
+            .item-card-details { grid-template-columns: 1fr; }
+        }
+        
+        /* --- Touch devices: remove hover effects --- */
+        @media (hover: none) and (pointer: coarse) {
+            .invoice-card:hover { transform: none; box-shadow: none; }
+            .btn:hover { transform: none; }
+            .btn:active { transform: scale(0.98); }
         }
     </style>
 </head>
